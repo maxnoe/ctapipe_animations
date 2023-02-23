@@ -53,15 +53,15 @@ class AnimateArrayShowers(Tool):
 
         fig = plt.figure(figsize=(19.2, 10.8), dpi=100)
 
-        ax = fig.add_subplot(1, 1, 1)
-        xmax = 300
-        ax.set_xlim(-xmax, xmax)
-        ax.set_ylim(-xmax / (16/9), xmax / (16 / 9))
+        ax = fig.add_axes([0, 0, 1, 1])
+        ymax = 200
+        ax.set_xlim(-ymax * (16/9), ymax * (16 / 9))
+        ax.set_ylim(-ymax, ymax)
 
         ax.set_aspect(1)
         ax.set_axis_off()
 
-        impact, = ax.plot([], [], 'rx', ms=15, label='impact', zorder=10)
+        impact, = ax.plot([], [], 'rx', markeredgewidth=2, ms=15, label='impact', zorder=10)
 
         axs = [
             ax.inset_axes([x - size / 2, y - size / 2, size, size], transform=ax.transData)
@@ -100,9 +100,13 @@ class AnimateArrayShowers(Tool):
 
     def update(self, frame):
         event = self.events[frame // self.n_samples]
+        obs_id = event.index.obs_id
+        event_id = event.index.event_id
+        energy = event.simulation.shower.energy.to_value(u.TeV)
         sample = frame % self.n_samples
 
         shower = event.simulation.shower
+        self.fig.suptitle(f"obs_id: {obs_id}, event_id: {event_id}, energy: {energy:.3f} TeV")
 
         impact = GroundFrame(x=shower.core_x, y=shower.core_y, z=0 * u.m).transform_to(self.tilted_frame)
         self.impact.set_data(impact.x.to_value(u.m)[..., np.newaxis], impact.y.to_value(u.m)[..., np.newaxis])
