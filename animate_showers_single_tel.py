@@ -29,8 +29,8 @@ class ShowerAnimation(Tool):
 
     def setup(self):
         plt.style.use("dark_background")
-        plt.rcParams["axes.facecolor"] = "0.1"
-        plt.rcParams["figure.facecolor"] = "0.1"
+        plt.rcParams["axes.facecolor"] = "#00004a"
+        plt.rcParams["figure.facecolor"] = "#00004a"
 
         self.source = self.enter_context(EventSource(
             parent=self,
@@ -40,12 +40,11 @@ class ShowerAnimation(Tool):
         self.cam = self.subarray.tel[self.tel_id].camera.geometry.transform_to(TelescopeFrame())
 
         self.events = [deepcopy(e) for e in self.source]
-        self.n_samples = self.events[0].r1.tel[self.tel_id].waveform.shape[1]
+        self.n_samples = self.events[0].r1.tel[self.tel_id].waveform.shape[-1]
 
         self.frames = len(self.events) * self.n_samples
 
-        # figsize / dpi will make FullHD video
-        self.fig = plt.figure(figsize=(19.2, 10.8), dpi=100)
+        self.fig = plt.figure(figsize=(11, 10), dpi=100)
         self.ax = self.fig.add_axes([0.01, 0.01, 0.95, 0.94])
         self.ax.set_axis_off()
 
@@ -58,7 +57,7 @@ class ShowerAnimation(Tool):
     def init_ani(self):
         # first sample of the first event
         waveform = self.events[0].r1.tel[self.tel_id].waveform
-        self.disp.image = waveform[:, 0]
+        self.disp.image = waveform[0, :, 0]
         self.disp.set_limits_minmax(0, waveform.max())
         return self.disp.pixels,
 
@@ -68,7 +67,7 @@ class ShowerAnimation(Tool):
         event = self.events[event_index]
         waveform = event.r1.tel[self.tel_id].waveform
 
-        self.disp.image = waveform[:, sample]
+        self.disp.image = waveform[0, :, sample]
         if sample == 0:
             self.disp.set_limits_minmax(0, waveform.max())
 
