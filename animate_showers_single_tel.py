@@ -89,7 +89,7 @@ class ShowerAnimation(Tool):
             interval=1000 / self.fps,
         )
         if self.output is not None:
-            ani.save(self.output, fps=self.fps, dpi=100, savefig_kwargs=dict(facecolor='0.1'))
+            ani.save(self.output, fps=self.fps, dpi=100, savefig_kwargs=dict(facecolor='#00004a'))
         else:
             plt.show()
 
