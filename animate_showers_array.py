@@ -24,6 +24,8 @@ class AnimateArrayShowers(Tool):
         ('f', 'fps'): 'AnimateArrayShowers.fps',
     }
 
+    classes = traits.classes_with_traits(EventSource)
+
     def setup(self):
         plt.style.use("dark_background")
         plt.rcParams["axes.facecolor"] = "0.1"

@@ -10,7 +10,7 @@ from ctapipe.visualization import CameraDisplay
 from ctapipe.coordinates import TelescopeFrame
 from ctapipe.io import EventSource
 from ctapipe.core import Tool
-from ctapipe.core.traits import Float, Path, Int
+from ctapipe.core.traits import Float, Path, Int, classes_with_traits
 
 
 class ShowerAnimation(Tool):
@@ -24,6 +24,8 @@ class ShowerAnimation(Tool):
         ('t', 'tel'): 'ShowerAnimation.tel_id',
         ('f', 'fps'): 'ShowerAnimation.fps',
     }
+    
+    classes = classes_with_traits(EventSource)
 
     def setup(self):
         plt.style.use("dark_background")
