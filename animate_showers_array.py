@@ -28,10 +28,10 @@ class AnimateArrayShowers(Tool):
 
     def setup(self):
         plt.style.use("dark_background")
-        plt.rcParams["axes.facecolor"] = "0.1"
-        plt.rcParams["figure.facecolor"] = "0.1"
+        plt.rcParams["axes.facecolor"] = "#00004a"
+        plt.rcParams["figure.facecolor"] = "#00004a"
 
-        self.source = self.enter_context(EventSource(parent=self))
+        self.source = self.enter_context(EventSource(parent=self, allowed_tels=[1, 2, 3, 4]))
         subarray = self.source.subarray
         self.events = [event for event in self.source]
 
@@ -40,7 +40,7 @@ class AnimateArrayShowers(Tool):
 
 
         self.n_events = len(self.events)
-        self.n_samples = self.events[0].r1.tel[1].waveform.shape[1]
+        self.n_samples = self.events[0].r1.tel[1].waveform.shape[-1]
         self.frames = self.n_events * self.n_samples
 
 
@@ -50,7 +50,7 @@ class AnimateArrayShowers(Tool):
         tel_x = tel_coords_tilted.x.to_value(u.m)
         tel_y = tel_coords_tilted.y.to_value(u.m)
 
-        # get relative extent to normalize coordiantes to [0, 1]
+        # get relative extent to normalize coordinates to [0, 1]
         size = 100
 
         fig = plt.figure(figsize=(19.2, 10.8), dpi=100)
@@ -96,7 +96,7 @@ class AnimateArrayShowers(Tool):
             ani = FuncAnimation(fig=self.fig, func=self.update, frames=self.frames)
 
             if self.output_path is not None:
-                ani.save(self.output_path, fps=self.fps, dpi=100, savefig_kwargs=dict(facecolor='0.1'))
+                ani.save(self.output_path, fps=self.fps, dpi=100, savefig_kwargs=dict(facecolor='#00004a'))
             else:
                 plt.show()
 
@@ -113,8 +113,8 @@ class AnimateArrayShowers(Tool):
         impact = GroundFrame(x=shower.core_x, y=shower.core_y, z=0 * u.m).transform_to(self.tilted_frame)
         self.impact.set_data(impact.x.to_value(u.m)[..., np.newaxis], impact.y.to_value(u.m)[..., np.newaxis])
         for tel_id, r1 in event.r1.tel.items():
-            self.disps[tel_id - 1].image = r1.waveform[:, sample]
-            self.disps[tel_id - 1].set_limits_minmax(0, r1.waveform.max())
+            self.disps[tel_id - 1].image = r1.waveform[0, :, sample]
+            self.disps[tel_id - 1].set_limits_minmax(0, r1.waveform[0].max())
 
         self.progress.update(1)
 
